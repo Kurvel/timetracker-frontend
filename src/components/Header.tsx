@@ -7,6 +7,7 @@ interface Props {
       <header>
         <button onClick={() => props.setPage("start")}>Start</button>
         <button onClick={() => props.setPage("task")}>Task</button>
+        <button onClick={() => props.setPage("user")}>User</button>
       </header>
     );
   }
