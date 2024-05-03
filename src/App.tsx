@@ -1,6 +1,7 @@
 import Start from './components/Start'
 import Header from './components/Header'
 import Task from './components/Task';
+import User from './components/User';
 import './App.css'
 import { useEffect, useState } from 'react';
 
@@ -30,6 +31,7 @@ function App() {
     {{
         start: <Start />,
         task: <Task />,
+        user: <User/>
         
       }[page] || <Start />}
     </>
