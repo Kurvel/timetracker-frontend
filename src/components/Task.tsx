@@ -55,6 +55,19 @@ function Task() {
     }
   };
 
+  const deleteTask = (id: string) => {
+    fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${id}`, {
+      method: 'DELETE',
+    })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res);
+      
+      fetchTasks();
+    }
+    )
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -74,7 +87,9 @@ function Task() {
       <div>
         {tasks && tasks.map((task: FormData) => (
           <div key={task.id}>
+            
             <p>{task.taskName}</p>
+            <button onClick={() => deleteTask(task.id)}>DELETE</button>
           </div>
         ))}
       </div>

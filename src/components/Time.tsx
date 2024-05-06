@@ -100,8 +100,28 @@ function Time() {
       console.error('Error:', error);
     }
   };
+
   
-  
+  const ElapsedTimeCounter: React.FC<{ startTime: number }> = ({ startTime }) => {
+    const [elapsedTime, setElapsedTime] = useState(0);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setElapsedTime(Date.now() - startTime);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, [startTime]);
+
+    const formatTime = (milliseconds: number) => {
+      const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+      const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+      return `${hours}h ${minutes}m ${seconds}s`;
+    };
+
+    return <span>{formatTime(elapsedTime)}</span>;
+  };
 
   return (
     <div>
@@ -125,6 +145,7 @@ function Time() {
           <div key={task.id}>
             <p>{task.taskName}</p>
             <p>Times: {task.times.join(', ')}</p>
+            {task.startTime && <ElapsedTimeCounter startTime={task.startTime} />}
             <button onClick={() => startTimer(task.id)}>Start Timer</button>
             <button onClick={() => stopTimer(task.id)}>Stop Timer</button>
           </div>
