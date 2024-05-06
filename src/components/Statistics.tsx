@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 interface TimeEntry {
   id: string;
-  startTime: any;
-  endTime: any;
+  startTime: string; 
+  endTime: string; 
   elapsedTime: number;
 }
 
@@ -13,7 +13,7 @@ interface Task {
   times: TimeEntry[];
 }
 
-function CombinedTime() {
+function Statistics() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -35,7 +35,6 @@ function CombinedTime() {
       });
   };
 
- 
   const formatTime = (milliseconds: number) => {
     const hours = Math.floor(milliseconds / (1000 * 60 * 60));
     const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
@@ -43,25 +42,40 @@ function CombinedTime() {
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
-  
-  const getTotalTimeSpent = () => {
-    let totalTime = 0;
+  const getTimeSpentPerWeek = () => {
+    const timeSpentPerWeek: { [key: string]: { [key: string]: number } } = {}; 
+
     tasks.forEach(task => {
+      timeSpentPerWeek[task.taskName] = {}; 
       task.times.forEach(timeEntry => {
-        totalTime += timeEntry.elapsedTime;
+        const startDate = new Date(timeEntry.startTime);
+        const weekStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - startDate.getDay()); 
+        const weekStartDateString = weekStart.toISOString().split('T')[0]; 
+
+        if (!timeSpentPerWeek[task.taskName][weekStartDateString]) {
+          timeSpentPerWeek[task.taskName][weekStartDateString] = 0;
+        }
+        timeSpentPerWeek[task.taskName][weekStartDateString] += timeEntry.elapsedTime;
       });
     });
-    return totalTime;
+
+    return timeSpentPerWeek;
   };
 
   return (
     <div>
-      <h3>Combined Time Spent</h3>
-      <p>Total Time Spent: {formatTime(getTotalTimeSpent())}</p>
+      <h3>Time Spent Per Week on Different Tasks</h3>
       <ul>
-        {tasks.map((task: Task) => (
-          <li key={task.id}>
-            {task.taskName}: {formatTime(task.times.reduce((acc, timeEntry) => acc + timeEntry.elapsedTime, 0))}
+        {Object.entries(getTimeSpentPerWeek()).map(([taskName, timeSpentPerWeek]) => (
+          <li key={taskName}>
+            <h4>{taskName}</h4>
+            <ul>
+              {Object.entries(timeSpentPerWeek).map(([weekStart, totalTime]) => (
+                <li key={weekStart}>
+                  Week of {weekStart}: {formatTime(totalTime)}
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
@@ -69,4 +83,4 @@ function CombinedTime() {
   );
 }
 
-export default CombinedTime;
+export default Statistics;

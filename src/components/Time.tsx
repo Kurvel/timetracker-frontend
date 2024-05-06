@@ -74,15 +74,25 @@ function Time() {
     const elapsedTime = Date.now() - taskToUpdate.startTime;
   
     try {
+      const startTimeWithTimezone = new Date(taskToUpdate.startTime).toISOString(); 
+  
       const response = await fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${taskId}/time`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ elapsedTime }) 
+        body: JSON.stringify({ startTime: startTimeWithTimezone, elapsedTime }) 
       });
       if (response.ok) {
-       
+        
+        const updatedTask = {
+          ...taskToUpdate,
+          times: [...taskToUpdate.times, elapsedTime], 
+          startTime: undefined 
+        };
+        setTasks(prevTasks =>
+          prevTasks.map(task => (task.id === taskId ? updatedTask : task))
+        );
       } else {
         console.error('Failed to update time spent for task');
       }
@@ -90,6 +100,7 @@ function Time() {
       console.error('Error:', error);
     }
   };
+  
   
 
   return (
