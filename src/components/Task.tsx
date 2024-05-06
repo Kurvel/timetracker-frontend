@@ -15,7 +15,7 @@ function Task() {
   });
 
   useEffect(() => {
-    fetchTasks(); // Fetch tasks when the component mounts
+    fetchTasks(); 
   }, []);
 
   const fetchTasks = () => {
@@ -45,7 +45,7 @@ function Task() {
       });
       if (response.ok) {
         console.log('Task added');
-        // Update tasks after adding a new task
+        
         fetchTasks();
       } else {
         console.error('Registration failed');
