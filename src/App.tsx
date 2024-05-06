@@ -2,6 +2,8 @@ import Start from './components/Start'
 import Header from './components/Header'
 import Task from './components/Task';
 import User from './components/User';
+import Time from './components/Time';
+import Statistics from './components/Statistics';
 import './App.css'
 import { useEffect, useState } from 'react';
 
@@ -31,8 +33,9 @@ function App() {
     {{
         start: <Start />,
         task: <Task />,
-        user: <User/>
-        
+        user: <User/>,
+        time: <Time/>,
+        statistics: <Statistics/>
       }[page] || <Start />}
     </>
   )

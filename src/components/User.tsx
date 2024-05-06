@@ -2,15 +2,15 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 interface FormData {
   userName: string;
-  
   password: string;
+  tasks: any[]; 
 }
 
 function User() {
   const [formData, setFormData] = useState<FormData>({
     userName: '',
-    
-    password: ''
+    password: '',
+    tasks: [] 
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,24 +25,24 @@ function User() {
     e.preventDefault();
 
     try {
+      
+      const formDataWithTasks = { ...formData, tasks: [] };
+
       const response = await fetch('http://localhost:8080/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formDataWithTasks)
       });
 
       if (response.ok) {
         console.log('Registration successful');
-        
       } else {
         console.error('Registration failed');
-        
       }
     } catch (error) {
       console.error('Error:', error);
-      
     }
   };
 
@@ -59,7 +59,6 @@ function User() {
           required
         />
       </div>
-     
       <div>
         <label htmlFor="password">Password:</label>
         <input
