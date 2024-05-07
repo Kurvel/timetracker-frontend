@@ -1,12 +1,42 @@
-
+import Start from './components/Start'
+import Header from './components/Header'
+import Task from './components/Task';
+import User from './components/User';
+import Time from './components/Time';
+import Statistics from './components/Statistics';
 import './App.css'
+import { useEffect, useState } from 'react';
 
 function App() {
-  
+  const [page, setPage] = useState<string>("");
+
+  useEffect(() => {
+    let pageUrl = page;
+
+    if (!pageUrl) {
+      const queryParameters = new URLSearchParams(window.location.search);
+      const getUrl = queryParameters.get("page");
+
+      if (getUrl) {
+        pageUrl = getUrl;
+        setPage(getUrl);
+      } else {
+        pageUrl = "start";
+      }
+    }
+    window.history.pushState(null, "", "?page=" + pageUrl);
+  }, [page]);
 
   return (
     <>
-      <h1>Hello Timetracker!</h1>
+    <Header setPage={setPage} />
+    {{
+        start: <Start />,
+        task: <Task />,
+        user: <User/>,
+        time: <Time/>,
+        statistics: <Statistics/>
+      }[page] || <Start />}
     </>
   )
 }
