@@ -12,6 +12,7 @@ interface State {
     lastName: string;
     login: string;
     password: string;
+    
 }
 
 export default class LoginForm extends React.Component<LoginFormProps, State> {
@@ -22,7 +23,8 @@ export default class LoginForm extends React.Component<LoginFormProps, State> {
             firstName: "",
             lastName: "",
             login: "",
-            password: ""
+            password: "",
+            
         };
     }
 

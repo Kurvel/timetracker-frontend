@@ -14,12 +14,13 @@ function Task() {
     times: []
   });
 
+  const userId = localStorage.getItem('userId');
   useEffect(() => {
     fetchTasks(); 
   }, []);
 
   const fetchTasks = () => {
-    fetch('http://localhost:8080/user/66389228e21d830197c65b81')
+    fetch(`http://localhost:8080/user/${userId}`)
       .then(res => res.json())
       .then(data => setTasks(data.tasks));
   };
@@ -36,7 +37,7 @@ function Task() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/user/66389228e21d830197c65b81/task', {
+      const response = await fetch(`http://localhost:8080/user/${userId}/task`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

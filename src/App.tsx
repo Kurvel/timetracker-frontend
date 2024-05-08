@@ -37,7 +37,10 @@ const App: React.FC<Props> = () => {
       password: password,
     })
       .then((response) => {
+        localStorage.setItem('userId', response.data.id);
         setAuthHeader(response.data.token);
+        console.log(response.data.id);
+        
         setComponentToShow('messages');
       })
       .catch((error) => {
@@ -89,18 +92,11 @@ const App: React.FC<Props> = () => {
 
   return (
     <>
-      <Header setPage={setPage} />
-      {{
-        start: <Start />,
-        task: <Task />,
-        user: <User />,
-        time: <Time />,
-        statistics: <Statistics />,
-      }[page] || <Start />}
+      <Start/>
       <Buttons login={login} logout={logout} />
       {componentToShow === 'welcome' && <WelcomeContent />}
       {componentToShow === 'login' && <LoginForm onLogin={onLogin} onRegister={onRegister} />}
-      {componentToShow === 'messages' && <AuthContent />}
+      {componentToShow === 'messages' && <AuthContent />  }
     </>
   );
 };
