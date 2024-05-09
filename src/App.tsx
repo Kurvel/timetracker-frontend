@@ -48,21 +48,31 @@ const App: React.FC<Props> = () => {
         setComponentToShow('welcome');
       });
   };
+  interface RegistrationData {
+    login: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    tasks: any[]; 
+  }
 
   const onRegister = (
     event: React.FormEvent<HTMLFormElement>,
     firstName: string,
     lastName: string,
     username: string,
-    password: string
+    password: string,
+    tasks: any[] 
   ) => {
     event.preventDefault();
-    request('POST', '/register', {
-      firstName: firstName,
-      lastName: lastName,
+    const registrationData: RegistrationData = {
       login: username,
       password: password,
-    })
+      firstName: firstName,
+      lastName: lastName,
+      tasks: tasks 
+    };
+    request('POST', '/register', registrationData)
       .then((response) => {
         setAuthHeader(response.data.token);
         setComponentToShow('messages');

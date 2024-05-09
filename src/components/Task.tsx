@@ -57,7 +57,7 @@ function Task() {
   };
 
   const deleteTask = (id: string) => {
-    fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${id}`, {
+    fetch(`http://localhost:8080/user/${userId}/task/${id}`, {
       method: 'DELETE',
     })
     .then(res => res.json())

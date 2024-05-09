@@ -15,13 +15,14 @@ interface Task {
 
 function Statistics() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
   const fetchTasks = () => {
-    fetch('http://localhost:8080/user/66389228e21d830197c65b81')
+    fetch(`http://localhost:8080/user/${userId}`)
       .then(res => res.json())
       .then(data => {
         if (data && data.tasks && data.tasks.length > 0) {
@@ -49,7 +50,7 @@ function Statistics() {
   };
 
   const handleDeleteTime = (taskId: string, timeId: string) => {
-    fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${taskId}/time/${timeId}`, {
+    fetch(`http://localhost:8080/user/${userId}/task/${taskId}/time/${timeId}`, {
       method: 'DELETE'
     })
       .then(response => {
