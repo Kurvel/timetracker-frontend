@@ -16,6 +16,7 @@ function Task() {
 
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('auth_token');
+  const url = localStorage.getItem('myUrl');
   useEffect(() => {
     fetchTasks(); 
   }, []);
@@ -28,7 +29,7 @@ function Task() {
   // Function to fetch tasks from the server
 const fetchTasks = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/user/${userId}`, {
+    const response = await fetch(url +`/user/${userId}`, {
       method: 'GET',
       headers: {
         'Authorization':'Bearer '+token,
@@ -62,7 +63,7 @@ const fetchTasks = async () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:8080/user/${userId}/task`, {
+      const response = await fetch(url +`/user/${userId}/task`, {
         method: 'POST',
         headers: {
           'Authorization':'Bearer '+token,
@@ -74,6 +75,11 @@ const fetchTasks = async () => {
         console.log('Task added');
         
         fetchTasks();
+        setFormData({
+          taskName: '',
+          id: '',
+          times: []
+        });
       } else {
         console.error('Registration failed');
       }
@@ -83,7 +89,7 @@ const fetchTasks = async () => {
   };
 
   const deleteTask = (id: string) => {
-    fetch(`http://localhost:8080/user/${userId}/task/${id}`, {
+    fetch(url +`/user/${userId}/task/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization':'Bearer '+token,
@@ -102,7 +108,7 @@ const fetchTasks = async () => {
     <>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="taskName">Task</label>
+          <label htmlFor="taskName" >Task</label>
           <input
             type="text"
             id="taskName"
@@ -118,7 +124,7 @@ const fetchTasks = async () => {
         {tasks && tasks.map((task: FormData) => (
           <div key={task.id}>
             
-            <p>{task.taskName}</p>
+            <h3>{task.taskName}</h3>
             <button onClick={() => deleteTask(task.id)}>DELETE</button>
           </div>
         ))}

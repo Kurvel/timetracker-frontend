@@ -21,6 +21,8 @@ interface State {
 }
 
 const App: React.FC<Props> = () => {
+  const url = "http://localhost:8080";
+  localStorage.setItem("myUrl", url);
   const [page, setPage] = useState<string>('');
   const [componentToShow, setComponentToShow] = useState<string>('welcome');
   const [seed, setSeed] = useState(1);
@@ -56,8 +58,8 @@ const App: React.FC<Props> = () => {
       .then((response) => {
         localStorage.setItem('userId', response.data.id);
         setAuthHeader(response.data.token);
-        console.log(response.data.id);
-        
+        console.log(response.data.token);
+        localStorage.setItem('role', response.data.role);
         setComponentToShow('messages');
       })
       .catch((error) => {
