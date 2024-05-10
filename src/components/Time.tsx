@@ -15,6 +15,7 @@ function Time() {
 
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('auth_token');
+  const url = localStorage.getItem('myUrl');
   
   useEffect(() => {
     fetchTasks();
@@ -27,7 +28,7 @@ function Time() {
   // };
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/user/${userId}`, {
+      const response = await fetch(url +`/user/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization':'Bearer '+token,
@@ -65,7 +66,7 @@ function Time() {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/user/${userId}/task`, {
+      const response = await fetch(url +`/user/${userId}/task`, {
         method: 'POST',
         headers: {
           'Authorization':'Bearer '+token,
@@ -102,7 +103,7 @@ function Time() {
     try {
       const startTimeWithTimezone = new Date(taskToUpdate.startTime).toISOString(); 
   
-      const response = await fetch(`http://localhost:8080/user/${userId}/task/${taskId}/time`, {
+      const response = await fetch(url +`/user/${userId}/task/${taskId}/time`, {
         method: 'POST',
         headers: {
           'Authorization':'Bearer '+token,

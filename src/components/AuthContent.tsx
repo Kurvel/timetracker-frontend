@@ -37,11 +37,17 @@ export default class AuthContent extends React.Component<{}, State> {
 
     render() {
         return (
-            <div>
-                {this.state.data && this.state.data}
+            <div >
+               <p>Hello {this.state.data && this.state.data} </p>  <br />
+
+               <div className="nav">
+               
                 <button onClick={() => this.setState({ showTask: true, showStatistics: false, showTime: false })}>Task</button>
+                
                 <button onClick={() => this.setState({ showTime: true, showStatistics: false, showTask: false })}>Time Tracker</button>
                 <button onClick={() => this.setState({ showStatistics: true, showTask: false, showTime: false })}>Statistics</button>
+               </div>
+                
                 {this.state.showTask && !this.state.showStatistics && !this.state.showTime && <Task />}
                 {this.state.showStatistics && !this.state.showTask && !this.state.showTime && <Statistics />}
                 {this.state.showTime && !this.state.showTask && !this.state.showStatistics && <Time/>}

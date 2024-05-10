@@ -17,6 +17,7 @@ function Statistics() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('auth_token');
+  const url = localStorage.getItem('myUrl');
 
   useEffect(() => {
     fetchTasks();
@@ -24,7 +25,7 @@ function Statistics() {
 
   const fetchTasks = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/user/${userId}`, {
+    const response = await fetch(url +`/user/${userId}`, {
       method: 'GET',
       headers: {
         'Authorization':'Bearer '+token,
@@ -58,7 +59,7 @@ function Statistics() {
   };
 
   const handleDeleteTime = (taskId: string, timeId: string) => {
-    fetch(`http://localhost:8080/user/${userId}/task/${taskId}/time/${timeId}`, {
+    fetch(url +`/user/${userId}/task/${taskId}/time/${timeId}`, {
       method: 'DELETE',
       headers: {
         'Authorization':'Bearer '+token,
