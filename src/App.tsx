@@ -11,26 +11,22 @@ import Admin from './components/Admin';
 
 interface Props {}
 
-interface State {
-  componentToShow: string;
-}
+
 
 
 const App: React.FC<Props> = () => {
-  const url = "http://localhost:8080";
+  const url = "https://monkfish-app-ztbvn.ondigitalocean.app/";
   localStorage.setItem("myUrl", url);
-  const [page, setPage] = useState<string>('');
+  
   const [componentToShow, setComponentToShow] = useState<string>('welcome');
-  const [seed, setSeed] = useState(1);
-  const reset = () => {
-    setSeed(Math.random());
-  }
+  
+  
 
 
   const login = () => {
     setComponentToShow('login');
     
-    reset();
+    
   };
 
   const logout = () => {
@@ -40,7 +36,7 @@ const App: React.FC<Props> = () => {
     setIsAdmin(false);
     setIsAuthenticated(false);
     localStorage.clear();
-    reset();
+    
     
     
   };
@@ -59,6 +55,8 @@ const App: React.FC<Props> = () => {
         setComponentToShow('messages');
       })
       .catch((error) => {
+        console.log(error);
+        
         setAuthHeader(null);
         setComponentToShow('welcome');
       });
@@ -93,6 +91,8 @@ const App: React.FC<Props> = () => {
         setComponentToShow('messages');
       })
       .catch((error) => {
+        console.log(error);
+        
         setAuthHeader(null);
         setComponentToShow('welcome');
       });

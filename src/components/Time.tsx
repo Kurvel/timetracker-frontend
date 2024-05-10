@@ -49,13 +49,13 @@ function Time() {
   };
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value
+  //   });
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,7 +64,8 @@ function Time() {
       taskName: formData.taskName,
       times: [] 
     };
-
+    console.log(handleSubmit);
+    
     try {
       const response = await fetch(url +`/user/${userId}/task`, {
         method: 'POST',

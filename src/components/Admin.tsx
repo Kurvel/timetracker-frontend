@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface User {
   id: string;
@@ -26,7 +26,8 @@ interface Task {
 function Admin() {
   const [users, setUsers] = useState<User[]>([]);
   const token = localStorage.getItem('auth_token');
-  const role = localStorage.getItem('role');
+  const url = localStorage.getItem('myUrl');
+
 
   useEffect(() => {
     fetchUsers();
@@ -34,7 +35,7 @@ function Admin() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/users`, {
+      const response = await fetch(url +`/users`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + token,
