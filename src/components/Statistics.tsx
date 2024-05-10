@@ -15,25 +15,35 @@ interface Task {
 
 function Statistics() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('auth_token');
+  const url = localStorage.getItem('myUrl');
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const fetchTasks = () => {
-    fetch('http://localhost:8080/user/66389228e21d830197c65b81')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.tasks && data.tasks.length > 0) {
-          setTasks(data.tasks);
-        } else {
-          console.error("No tasks data found.");
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching tasks:', error);
-      });
-  };
+  const fetchTasks = async () => {
+  try {
+    const response = await fetch(url +`/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization':'Bearer '+token,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Tasks fetched successfully:', data.tasks);
+      // Handle the fetched tasks here
+      setTasks(data.tasks);
+    } else {
+      console.error('Failed to fetch tasks');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
   const formatTime = (milliseconds: number) => {
     const hours = Math.floor(milliseconds / (1000 * 60 * 60));
@@ -49,8 +59,11 @@ function Statistics() {
   };
 
   const handleDeleteTime = (taskId: string, timeId: string) => {
-    fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${taskId}/time/${timeId}`, {
-      method: 'DELETE'
+    fetch(url +`/user/${userId}/task/${taskId}/time/${timeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization':'Bearer '+token,
+        'Content-Type': 'application/json' }
     })
       .then(response => {
         if (response.ok) {

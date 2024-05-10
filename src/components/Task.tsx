@@ -14,15 +14,42 @@ function Task() {
     times: []
   });
 
+  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('auth_token');
+  const url = localStorage.getItem('myUrl');
   useEffect(() => {
     fetchTasks(); 
   }, []);
 
-  const fetchTasks = () => {
-    fetch('http://localhost:8080/user/66389228e21d830197c65b81')
-      .then(res => res.json())
-      .then(data => setTasks(data.tasks));
-  };
+  // const fetchTasks = () => {
+  //   fetch(`http://localhost:8080/user/${userId}`, {})
+  //     .then(res => res.json())
+  //     .then(data => setTasks(data.tasks));
+  // };
+  // Function to fetch tasks from the server
+const fetchTasks = async () => {
+  try {
+    const response = await fetch(url +`/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization':'Bearer '+token,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Tasks fetched successfully:', data.tasks);
+      // Handle the fetched tasks here
+      setTasks(data.tasks);
+    } else {
+      console.error('Failed to fetch tasks');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,9 +63,10 @@ function Task() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/user/66389228e21d830197c65b81/task', {
+      const response = await fetch(url +`/user/${userId}/task`, {
         method: 'POST',
         headers: {
+          'Authorization':'Bearer '+token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
@@ -47,6 +75,11 @@ function Task() {
         console.log('Task added');
         
         fetchTasks();
+        setFormData({
+          taskName: '',
+          id: '',
+          times: []
+        });
       } else {
         console.error('Registration failed');
       }
@@ -56,8 +89,11 @@ function Task() {
   };
 
   const deleteTask = (id: string) => {
-    fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${id}`, {
+    fetch(url +`/user/${userId}/task/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization':'Bearer '+token,
+        'Content-Type': 'application/json' }
     })
     .then(res => res.json())
     .then(res => {
@@ -72,7 +108,7 @@ function Task() {
     <>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="taskName">Task</label>
+          <label htmlFor="taskName" >Task</label>
           <input
             type="text"
             id="taskName"
@@ -88,7 +124,7 @@ function Task() {
         {tasks && tasks.map((task: FormData) => (
           <div key={task.id}>
             
-            <p>{task.taskName}</p>
+            <h3>{task.taskName}</h3>
             <button onClick={() => deleteTask(task.id)}>DELETE</button>
           </div>
         ))}
