@@ -9,7 +9,10 @@ import AuthContent from './components/AuthContent';
 import LoginForm from './components/LoginForm';
 import WelcomeContent from './components/WelcomeContent';
 import Buttons from './components/Buttons';
-import { request, setAuthHeader } from './axios_helper';
+import { request, setAuthHeader, getAuthToken } from './axios_helper';
+import { jwtDecode } from 'jwt-decode';
+import { CustomJwtPayload } from './entity/CustomJwtPayload';
+import Admin from './components/Admin';
 
 interface Props {}
 
@@ -20,14 +23,28 @@ interface State {
 const App: React.FC<Props> = () => {
   const [page, setPage] = useState<string>('');
   const [componentToShow, setComponentToShow] = useState<string>('welcome');
+  const [seed, setSeed] = useState(1);
+  const reset = () => {
+    setSeed(Math.random());
+  }
+
 
   const login = () => {
     setComponentToShow('login');
+    
+    reset();
   };
 
   const logout = () => {
+    console.log('Logging out');
     setComponentToShow('welcome');
     setAuthHeader(null);
+    setIsAdmin(false);
+    setIsAuthenticated(false);
+    localStorage.clear();
+    reset();
+    
+    
   };
 
   const onLogin = (e: React.FormEvent<HTMLFormElement>, username: string, password: string) => {
@@ -83,30 +100,56 @@ const App: React.FC<Props> = () => {
       });
   };
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
-    let pageUrl = page;
 
-    if (!pageUrl) {
-      const queryParameters = new URLSearchParams(window.location.search);
-      const getUrl = queryParameters.get('page');
-
-      if (getUrl) {
-        pageUrl = getUrl;
-        setPage(getUrl);
-      } else {
-        pageUrl = 'start';
-      }
+    let token = getAuthToken();
+    if (token !== null) {
+        setIsAuthenticated(true);
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        console.log("decoded", decoded);
+        if (decoded.role == "ADMIN") {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+    } else {
+        setIsAuthenticated(false);
     }
-    window.history.pushState(null, '', `?page=${pageUrl}`);
-  }, [page]);
+
+  }, [login]);
+
+  // useEffect(() => {
+  //   let pageUrl = page;
+
+  //   if (!pageUrl) {
+  //     const queryParameters = new URLSearchParams(window.location.search);
+  //     const getUrl = queryParameters.get('page');
+
+  //     if (getUrl) {
+  //       pageUrl = getUrl;
+  //       setPage(getUrl);
+  //     } else {
+  //       pageUrl = 'start';
+  //     }
+  //   }
+  //   window.history.pushState(null, '', `?page=${pageUrl}`);
+  // }, [page]);
 
   return (
     <>
-      <Start/>
+    
+      {/* <Start/> */}
       <Buttons login={login} logout={logout} />
-      {componentToShow === 'welcome' && <WelcomeContent />}
+      {!isAuthenticated && <WelcomeContent/>}
+      {/* {componentToShow === 'welcome' && <WelcomeContent />} */}
       {componentToShow === 'login' && <LoginForm onLogin={onLogin} onRegister={onRegister} />}
-      {componentToShow === 'messages' && <AuthContent />  }
+      {/* {!isAuthenticated&& <LoginForm onLogin={onLogin} onRegister={onRegister}/>} */}
+      {/* {componentToShow === 'messages' && <AuthContent />  } */}
+      {isAuthenticated && !isAdmin && <AuthContent />}
+      {isAuthenticated && isAdmin && <Admin/>}
+      
     </>
   );
 };
