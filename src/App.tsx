@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Start from './components/Start';
-import Header from './components/Header';
-import Task from './components/Task';
-import User from './components/User';
-import Time from './components/Time';
-import Statistics from './components/Statistics';
+
 import AuthContent from './components/AuthContent';
 import LoginForm from './components/LoginForm';
 import WelcomeContent from './components/WelcomeContent';
@@ -19,6 +14,7 @@ interface Props {}
 interface State {
   componentToShow: string;
 }
+
 
 const App: React.FC<Props> = () => {
   const url = "http://localhost:8080";
