@@ -13,15 +13,40 @@ function Time() {
     taskName: '',
   });
 
+  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('auth_token');
+  
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const fetchTasks = () => {
-    fetch('http://localhost:8080/user/66389228e21d830197c65b81')
-      .then(res => res.json())
-      .then(data => setTasks(data.tasks.map((task: Task) => ({ ...task, times: [] }))));
+  // const fetchTasks = () => {
+  //   fetch(`http://localhost:8080/user/${userId}`)
+  //     .then(res => res.json())
+  //     .then(data => setTasks(data.tasks.map((task: Task) => ({ ...task, times: [] }))));
+  // };
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization':'Bearer '+token,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Tasks fetched successfully:', data.tasks);
+        // Handle the fetched tasks here
+        setTasks(data.tasks.map((task: Task) => ({ ...task, times: [] })));
+      } else {
+        console.error('Failed to fetch tasks');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,9 +65,10 @@ function Time() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/user/66389228e21d830197c65b81/task', {
+      const response = await fetch(`http://localhost:8080/user/${userId}/task`, {
         method: 'POST',
         headers: {
+          'Authorization':'Bearer '+token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(newTask)
@@ -76,9 +102,10 @@ function Time() {
     try {
       const startTimeWithTimezone = new Date(taskToUpdate.startTime).toISOString(); 
   
-      const response = await fetch(`http://localhost:8080/user/66389228e21d830197c65b81/task/${taskId}/time`, {
+      const response = await fetch(`http://localhost:8080/user/${userId}/task/${taskId}/time`, {
         method: 'POST',
         headers: {
+          'Authorization':'Bearer '+token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ startTime: startTimeWithTimezone, elapsedTime }) 
@@ -126,20 +153,7 @@ function Time() {
   return (
     <div>
       <h3>Time Tracker</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="taskName">Task Name:</label>
-          <input
-            type="text"
-            id="taskName"
-            name="taskName"
-            value={formData.taskName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Add Task</button>
-      </form>
+     
       <div>
         {tasks.map((task: Task) => (
           <div key={task.id}>
