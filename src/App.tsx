@@ -88,6 +88,10 @@ const App: React.FC<Props> = () => {
     request('POST', '/register', registrationData)
       .then((response) => {
         setAuthHeader(response.data.token);
+        localStorage.setItem('userId', response.data.id);
+        
+        console.log(response.data.token);
+        localStorage.setItem('role', response.data.role);
         setComponentToShow('messages');
       })
       .catch((error) => {
