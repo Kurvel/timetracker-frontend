@@ -15,7 +15,7 @@ interface Props {}
 
 
 const App: React.FC<Props> = () => {
-  const url = "https://monkfish-app-ztbvn.ondigitalocean.app/";
+  const url = "https://monkfish-app-ztbvn.ondigitalocean.app";
   localStorage.setItem("myUrl", url);
   
   const [componentToShow, setComponentToShow] = useState<string>('welcome');
