@@ -1,66 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import AuthContent from './components/AuthContent';
-import LoginForm from './components/LoginForm';
-import WelcomeContent from './components/WelcomeContent';
-import Buttons from './components/Buttons';
-import { request, setAuthHeader, getAuthToken } from './axios_helper';
-import { jwtDecode } from 'jwt-decode';
-import { CustomJwtPayload } from './entity/CustomJwtPayload';
-import Admin from './components/Admin';
+import AuthContent from "./components/AuthContent";
+import LoginForm from "./components/LoginForm";
+import WelcomeContent from "./components/WelcomeContent";
+import Buttons from "./components/Buttons";
+import { request, setAuthHeader, getAuthToken } from "./axios_helper";
+import { jwtDecode } from "jwt-decode";
+import { CustomJwtPayload } from "./entity/CustomJwtPayload";
+import Admin from "./components/Admin";
 
 interface Props {}
 
-interface State {
-  componentToShow: string;
-}
-
-
 const App: React.FC<Props> = () => {
-  const url = "http://localhost:8080";
+  const url = "https://monkfish-app-ztbvn.ondigitalocean.app";
   localStorage.setItem("myUrl", url);
-  const [page, setPage] = useState<string>('');
-  const [componentToShow, setComponentToShow] = useState<string>('welcome');
-  const [seed, setSeed] = useState(1);
-  const reset = () => {
-    setSeed(Math.random());
-  }
 
+  const [componentToShow, setComponentToShow] = useState<string>("welcome");
 
   const login = () => {
-    setComponentToShow('login');
-    
-    reset();
+    setComponentToShow("login");
   };
 
   const logout = () => {
-    console.log('Logging out');
-    setComponentToShow('welcome');
+    console.log("Logging out");
+    setComponentToShow("welcome");
     setAuthHeader(null);
     setIsAdmin(false);
     setIsAuthenticated(false);
     localStorage.clear();
-    reset();
-    
-    
   };
 
-  const onLogin = (e: React.FormEvent<HTMLFormElement>, username: string, password: string) => {
+  const onLogin = (
+    e: React.FormEvent<HTMLFormElement>,
+    username: string,
+    password: string
+  ) => {
     e.preventDefault();
-    request('POST', '/login', {
+    request("POST", "/login", {
       login: username,
       password: password,
     })
       .then((response) => {
-        localStorage.setItem('userId', response.data.id);
+        localStorage.setItem("userId", response.data.id);
         setAuthHeader(response.data.token);
         console.log(response.data.token);
-        localStorage.setItem('role', response.data.role);
-        setComponentToShow('messages');
+        localStorage.setItem("role", response.data.role);
+        setComponentToShow("messages");
       })
       .catch((error) => {
+        console.log(error);
+
         setAuthHeader(null);
-        setComponentToShow('welcome');
+        setComponentToShow("welcome");
       });
   };
   interface RegistrationData {
@@ -68,7 +59,7 @@ const App: React.FC<Props> = () => {
     password: string;
     firstName: string;
     lastName: string;
-    tasks: any[]; 
+    tasks: any[];
   }
 
   const onRegister = (
@@ -77,7 +68,7 @@ const App: React.FC<Props> = () => {
     lastName: string,
     username: string,
     password: string,
-    tasks: any[] 
+    tasks: any[]
   ) => {
     event.preventDefault();
     const registrationData: RegistrationData = {
@@ -85,69 +76,57 @@ const App: React.FC<Props> = () => {
       password: password,
       firstName: firstName,
       lastName: lastName,
-      tasks: tasks 
+      tasks: tasks,
     };
-    request('POST', '/register', registrationData)
+    request("POST", "/register", registrationData)
       .then((response) => {
         setAuthHeader(response.data.token);
-        setComponentToShow('messages');
+        localStorage.setItem("userId", response.data.id);
+
+        console.log(response.data.token);
+        localStorage.setItem("role", response.data.role);
+        setComponentToShow("messages");
       })
       .catch((error) => {
+        console.log(error);
+
         setAuthHeader(null);
-        setComponentToShow('welcome');
+        setComponentToShow("welcome");
       });
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
-
     let token = getAuthToken();
     if (token !== null) {
-        setIsAuthenticated(true);
-        const decoded = jwtDecode<CustomJwtPayload>(token);
-        console.log("decoded", decoded);
-        if (decoded.role == "ADMIN") {
-            setIsAdmin(true);
-        } else {
-            setIsAdmin(false);
-        }
+      setIsAuthenticated(true);
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      console.log("decoded", decoded);
+      if (decoded.role == "ADMIN") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
     } else {
-        setIsAuthenticated(false);
+      setIsAuthenticated(false);
     }
-
   }, [login]);
 
-  // useEffect(() => {
-  //   let pageUrl = page;
-
-  //   if (!pageUrl) {
-  //     const queryParameters = new URLSearchParams(window.location.search);
-  //     const getUrl = queryParameters.get('page');
-
-  //     if (getUrl) {
-  //       pageUrl = getUrl;
-  //       setPage(getUrl);
-  //     } else {
-  //       pageUrl = 'start';
-  //     }
-  //   }
-  //   window.history.pushState(null, '', `?page=${pageUrl}`);
-  // }, [page]);
+  
 
   return (
     <>
-    
-      {/* <Start/> */}
-      <Buttons login={login} logout={logout} />
-      {!isAuthenticated && <WelcomeContent/>}
-      {/* {componentToShow === 'welcome' && <WelcomeContent />} */}
-      {componentToShow === 'login' && <LoginForm onLogin={onLogin} onRegister={onRegister} />}
-      {/* {!isAuthenticated&& <LoginForm onLogin={onLogin} onRegister={onRegister}/>} */}
-      {/* {componentToShow === 'messages' && <AuthContent />  } */}
-      {isAuthenticated && !isAdmin && <AuthContent />}
-      {isAuthenticated && isAdmin && <Admin/>}
       
+      <Buttons login={login} logout={logout} />
+      {!isAuthenticated && <WelcomeContent />}
+      
+      {componentToShow === "login" && (
+        <LoginForm onLogin={onLogin} onRegister={onRegister} />
+      )}
+      
+      {isAuthenticated && !isAdmin && <AuthContent />}
+      {isAuthenticated && isAdmin && <Admin />}
     </>
   );
 };
