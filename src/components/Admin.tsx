@@ -25,9 +25,8 @@ interface Task {
 
 function Admin() {
   const [users, setUsers] = useState<User[]>([]);
-  const token = localStorage.getItem('auth_token');
-  const url = localStorage.getItem('myUrl');
-
+  const token = localStorage.getItem("auth_token");
+  const url = localStorage.getItem("myUrl");
 
   useEffect(() => {
     fetchUsers();
@@ -35,24 +34,23 @@ function Admin() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(url +`/users`, {
-        method: 'GET',
+      const response = await fetch(url + `/users`, {
+        method: "GET",
         headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
-          
-        }
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Users fetched successfully:', data);
-        // Handle the fetched users here
+        console.log("Users fetched successfully:", data);
+
         setUsers(data);
       } else {
-        console.error('Failed to fetch users');
+        console.error("Failed to fetch users");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -66,16 +64,17 @@ function Admin() {
   return (
     <div>
       <h3>ADMIN</h3>
-      {users.map(user => (
+      {users.map((user) => (
         <div key={user.id}>
           <h4>{`${user.firstName} ${user.lastName}`}</h4>
-          {user.tasks.map(task => (
+          {user.tasks.map((task) => (
             <div key={task.id}>
               <h5>{task.taskName}</h5>
               <ul>
-                {task.times.map(timeEntry => (
+                {task.times.map((timeEntry) => (
                   <li key={timeEntry.id}>
-                    {timeEntry.startTime} - {timeEntry.endTime} ({formatTime(timeEntry.elapsedTime)})
+                    {timeEntry.startTime} - {timeEntry.endTime} (
+                    {formatTime(timeEntry.elapsedTime)})
                   </li>
                 ))}
               </ul>
